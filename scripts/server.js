@@ -30,7 +30,7 @@ const request_data = {
     method: 'GET'
 };
 const authHeader = oauth.toHeader(oauth.authorize(request_data));
-getForm()
+
 async function getForm() {
     try {
         console.log("Empezando el procedimiento!")
@@ -55,7 +55,6 @@ async function getForm() {
                     JSON.stringify(output)
                 ]
             );
-            existentes.add(entry.id);
         }
     } catch (err) {
         console.log(err)
