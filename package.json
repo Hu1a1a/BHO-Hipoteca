@@ -15,12 +15,14 @@
     "cors": "^2.8.5",
     "cron": "^4.3.1",
     "crypto": "^1.0.1",
-    "dotenv": "^17.1.0",
+    "dotenv": "^17.2.0",
     "express": "^5.1.0",
+    "mysql2": "^3.14.1",
     "node-cron": "^4.2.0",
     "nodemailer": "^7.0.5",
     "oauth-1.0a": "^2.2.6",
-    "openai": "^5.8.3"
+    "openai": "^5.8.3",
+    "pdfkit": "^0.17.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"

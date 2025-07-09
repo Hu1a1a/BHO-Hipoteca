@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+const path = require('path');
 
 const transporter = nodemailer.createTransport({
     host: "mail.buscadordehipotecas.com",
@@ -22,10 +23,10 @@ async function enviarCorreo(opts) {
         subject,
         text,
         html,
-        // attachments: attachments.map(file => ({
-        //     filename: path.basename(file),
-        //     path: file
-        // }))
+        attachments: attachments.map(file => ({
+            filename: path.basename(file),
+            path: file
+        }))
     });
 }
 
