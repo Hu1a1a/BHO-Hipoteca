@@ -1,0 +1,436 @@
+[
+    {
+        "nombre": "ING",
+        "productos": [
+            {
+                "tipo": "primera_vivienda",
+                "LTV_max": 80,
+                "LTV_joven": 100,
+                "aportacion_minima": 0.05,
+                "empleo_requerido": [
+                    "funcionario",
+                    "indefinido",
+                    "autonomo_2a",
+                    "temporal_12m"
+                ],
+                "plazo_max": 40,
+                "notas": "Hipoteca joven hasta 100% LTV sin aval para <36 años. Nómina >= 600€. No admite doble garantía. No viviendas <80k."
+            },
+            {
+                "tipo": "segunda_vivienda",
+                "LTV_max": 75,
+                "aportacion_minima": 0.25,
+                "empleo_requerido": [
+                    "funcionario",
+                    "indefinido",
+                    "autonomo_2a"
+                ],
+                "plazo_max": 30
+            }
+        ],
+        "no_residentes": {
+            "LTV_max": 65,
+            "plazo_max": 25,
+            "requisitos": "Residentes UE-27/UK/Suiza, estudios caso-a-caso, excluidos cambio de casa y alquiler inversor"
+        },
+        "exclusiones": [
+            "LTV > 95% salvo Hipoteca Joven <36 años (100% sin aval)",
+            "No doble garantía",
+            "No viviendas <80k",
+            "No admite cambio de casa con LTV >80%",
+            "No admite doble garantía"
+        ]
+    },
+    {
+        "nombre": "Banco Sabadell",
+        "productos": [
+            {
+                "tipo": "primera_vivienda",
+                "LTV_max": 80,
+                "LTV_joven": 95,
+                "LTV_ICO": 100,
+                "aportacion_minima": 0.05,
+                "empleo_requerido": [
+                    "funcionario",
+                    "indefinido"
+                ],
+                "plazo_max": 30,
+                "notas": "\"Mi Primera Vivienda\" y ICO para jóvenes: hasta 95-100% LTV."
+            },
+            {
+                "tipo": "segunda_vivienda",
+                "LTV_max": 70,
+                "aportacion_minima": 0.3,
+                "empleo_requerido": [
+                    "funcionario",
+                    "indefinido",
+                    "temporal"
+                ],
+                "plazo_max": 30
+            },
+            {
+                "tipo": "autoconstrucción",
+                "LTV_max": 70,
+                "aportacion_minima": 0.3,
+                "empleo_requerido": [
+                    "funcionario",
+                    "indefinido"
+                ],
+                "plazo_max": 30
+            }
+        ],
+        "no_residentes": {
+            "LTV_max": 70,
+            "plazo_max": 30
+        },
+        "exclusiones": [
+            "Garantías >100k; Sin ascensor (>3ª) requiere aportación >40%",
+            "No admite subrogación con LTV >80%"
+        ]
+    },
+    {
+        "nombre": "BBVA",
+        "productos": [
+            {
+                "tipo": "primera_vivienda",
+                "LTV_max": 80,
+                "LTV_joven": 95,
+                "LTV_ICO": 100,
+                "aportacion_minima": 0.05,
+                "empleo_requerido": [
+                    "funcionario",
+                    "indefinido",
+                    "autonomo_2a",
+                    "temporal_12m"
+                ],
+                "plazo_max": 30,
+                "notas": "Hipoteca joven y aval ICO disponibles."
+            },
+            {
+                "tipo": "autoconstrucción",
+                "LTV_max": 80,
+                "aportacion_minima": 0.2,
+                "empleo_requerido": [
+                    "funcionario",
+                    "indefinido"
+                ],
+                "plazo_max": 30
+            }
+        ],
+        "no_residentes": {
+            "disponible": false
+        },
+        "exclusiones": [
+            "No residentes",
+            "Reforma solo post-obra",
+            "No viviendas <80k"
+        ]
+    },
+    {
+        "nombre": "Kutxabank",
+        "productos": [
+            {
+                "tipo": "primera_vivienda",
+                "LTV_max": 80,
+                "LTV_joven": 95,
+                "aportacion_minima": 0.05,
+                "empleo_requerido": [
+                    "funcionario",
+                    "indefinido",
+                    "autonomo_2a"
+                ],
+                "plazo_max": 30
+            },
+            {
+                "tipo": "autoconstrucción",
+                "LTV_max": 75,
+                "aportacion_minima": 0.25,
+                "empleo_requerido": [
+                    "funcionario",
+                    "indefinido"
+                ],
+                "plazo_max": 30
+            }
+        ],
+        "no_residentes": {
+            "LTV_max": 70,
+            "plazo_max": 25
+        },
+        "exclusiones": []
+    },
+    {
+        "nombre": "Santander",
+        "productos": [
+            {
+                "tipo": "primera_vivienda",
+                "LTV_max": 80,
+                "LTV_joven": 95,
+                "aportacion_minima": 0.05,
+                "empleo_requerido": [
+                    "funcionario",
+                    "indefinido"
+                ],
+                "plazo_max": 30,
+                "notas": "Hipoteca joven 95% con aval solidario"
+            },
+            {
+                "tipo": "autoconstrucción",
+                "LTV_max": 80,
+                "aportacion_minima": 0.2,
+                "empleo_requerido": [
+                    "funcionario",
+                    "indefinido"
+                ],
+                "plazo_max": 30
+            }
+        ],
+        "no_residentes": {
+            "LTV_max": 70,
+            "producto": "Hipoteca Mundo"
+        },
+        "exclusiones": []
+    },
+    {
+        "nombre": "Bankinter",
+        "productos": [
+            {
+                "tipo": "primera_vivienda",
+                "LTV_max": 80,
+                "aportacion_minima": 0.2,
+                "empleo_requerido": [
+                    "funcionario",
+                    "indefinido"
+                ],
+                "plazo_max": 30
+            },
+            {
+                "tipo": "reforma",
+                "LTV_max": 75,
+                "aportacion_minima": 0.25,
+                "empleo_requerido": [
+                    "funcionario",
+                    "indefinido",
+                    "autonomo"
+                ],
+                "plazo_max": 25
+            }
+        ],
+        "no_residentes": {
+            "LTV_max": 70,
+            "divisa": "euro"
+        },
+        "exclusiones": [
+            "No oferta oficial de autopromotor",
+            "No reforma de viviendas <1 año"
+        ]
+    },
+    {
+        "nombre": "MyInvestor",
+        "productos": [
+            {
+                "tipo": "primera_vivienda",
+                "LTV_max": 80,
+                "aportacion_minima": 0.2,
+                "empleo_requerido": [
+                    "indefinido"
+                ],
+                "plazo_max": 30,
+                "notas": "Requiere ingresos >= 4000€/mes. Sin productos para reforma, autoconstrucción ni no residentes."
+            }
+        ],
+        "no_residentes": {
+            "disponible": false
+        },
+        "exclusiones": []
+    },
+    {
+        "nombre": "EVO Banco",
+        "productos": [
+            {
+                "tipo": "primera_vivienda",
+                "LTV_max": 80,
+                "aportacion_minima": 0.2,
+                "empleo_requerido": [
+                    "indefinido"
+                ],
+                "plazo_max": 30,
+                "notas": "Edad + plazo <= 75 años"
+            },
+            {
+                "tipo": "segunda_vivienda",
+                "LTV_max": 60,
+                "aportacion_minima": 0.4,
+                "empleo_requerido": [
+                    "indefinido"
+                ],
+                "plazo_max": 30
+            }
+        ],
+        "no_residentes": {
+            "disponible": false
+        },
+        "exclusiones": [
+            "No autopromotor",
+            "No NR"
+        ]
+    },
+    {
+        "nombre": "Openbank",
+        "productos": [
+            {
+                "tipo": "primera_vivienda",
+                "LTV_max": 80,
+                "aportacion_minima": 0.2,
+                "empleo_requerido": [
+                    "indefinido",
+                    "autonomo"
+                ],
+                "plazo_max": 30,
+                "notas": "Edad + plazo <= 80 años"
+            },
+            {
+                "tipo": "segunda_vivienda",
+                "LTV_max": 70,
+                "aportacion_minima": 0.3,
+                "empleo_requerido": [
+                    "indefinido"
+                ],
+                "plazo_max": 30
+            }
+        ],
+        "no_residentes": {
+            "disponible": false
+        },
+        "exclusiones": [
+            "No NR",
+            "No autopromotor"
+        ]
+    },
+    {
+        "nombre": "Triodos Bank",
+        "productos": [
+            {
+                "tipo": "primera_vivienda",
+                "LTV_max": 80,
+                "aportacion_minima": 0.2,
+                "empleo_requerido": [
+                    "indefinido"
+                ],
+                "plazo_max": 30,
+                "notas": "Diferencial baja con certificación energética A-B. Hipoteca verde."
+            }
+        ],
+        "no_residentes": {
+            "disponible": false
+        },
+        "exclusiones": [
+            "No NR",
+            "No autopromotor",
+            "No inversión pura"
+        ]
+    },
+    {
+        "nombre": "ABANCA",
+        "productos": [
+            {
+                "tipo": "primera_vivienda",
+                "LTV_max": 80,
+                "LTV_joven": 100,
+                "aportacion_minima": 0.2,
+                "empleo_requerido": [
+                    "indefinido"
+                ],
+                "plazo_max": 30,
+                "notas": "Hipoteca joven hasta 100% para <45 años, programa Mi Primera Vivienda."
+            },
+            {
+                "tipo": "segunda_vivienda",
+                "LTV_max": 60,
+                "aportacion_minima": 0.4,
+                "empleo_requerido": [
+                    "indefinido"
+                ],
+                "plazo_max": 30
+            }
+        ],
+        "no_residentes": {
+            "disponible": false
+        },
+        "exclusiones": []
+    },
+    {
+        "nombre": "Ibercaja",
+        "productos": [
+            {
+                "tipo": "primera_vivienda",
+                "LTV_max": 80,
+                "LTV_joven": 95,
+                "aportacion_minima": 0.2,
+                "empleo_requerido": [
+                    "indefinido"
+                ],
+                "plazo_max": 25,
+                "notas": "Hipoteca Vamos 95% jóvenes <=35 años"
+            },
+            {
+                "tipo": "autoconstrucción",
+                "LTV_max": 80,
+                "aportacion_minima": 0.2,
+                "empleo_requerido": [
+                    "indefinido"
+                ],
+                "plazo_max": 25
+            }
+        ],
+        "no_residentes": {
+            "disponible": false
+        },
+        "exclusiones": []
+    },
+    {
+        "nombre": "UCI",
+        "productos": [
+            {
+                "tipo": "primera_vivienda",
+                "LTV_max": 80,
+                "LTV_joven": 95,
+                "aportacion_minima": 0.05,
+                "empleo_requerido": [
+                    "funcionario",
+                    "indefinido",
+                    "autonomo_3a"
+                ],
+                "plazo_max": 30,
+                "notas": "Requiere justificación de destino de fondos, consultable en política interna"
+            },
+            {
+                "tipo": "segunda_vivienda",
+                "LTV_max": 60,
+                "aportacion_minima": 0.3,
+                "empleo_requerido": [
+                    "funcionario",
+                    "indefinido",
+                    "autonomo_3a"
+                ],
+                "plazo_max": 30
+            }
+        ],
+        "no_residentes": {
+            "LTV_max": 70,
+            "plazo_max": 30,
+            "países_aceptados": [
+                "UE",
+                "UK",
+                "Suiza",
+                "Noruega",
+                "Canadá",
+                "EEUU"
+            ]
+        },
+        "exclusiones": [
+            "No admite asalariados temporales ni eventuales en NR",
+            "No viviendas <80k",
+            "Exclusiones geográficas según valor vivienda y municipio"
+        ]
+    }
+]
