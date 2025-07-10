@@ -92,7 +92,7 @@ async function getResponseAI(form) {
         store: true
     });
     mail.enviarCorreo({
-        to: 'jorgeespallargas@hotmail.com',
+        to: ['jorgeespallargas@hotmail.com', 'yang.ye.1@hotmail.com'],
         subject: 'Buscador de Hipoteca ' + response.id,
         text: response.output_text,
         attachments: ['app/outputs/pdfs/' + response.id + '.pdf']
