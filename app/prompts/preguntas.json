@@ -1,0 +1,212 @@
+[
+  {
+    "id": [3],
+    "pregunta": "¿Para qué necesitas la hipoteca?",
+    "opciones": [
+      "vivienda nueva",
+      "vivienda 2ª mano",
+      "Comprar y reformar vivienda",
+      "Construir mi propia casa",
+      "Reformar la casa que ya tengo"
+    ]
+  },
+  {
+    "id": [4],
+    "pregunta": "¿Para qué usarás la vivienda?",
+    "opciones": [
+      "Vivienda habitual",
+      "Segunda vivienda",
+      "Es una inversión"
+    ]
+  },
+  {
+    "id": [5, 210],
+    "pregunta": "¿En qué punto estás ahora?",
+    "opciones": [
+      "Ya tengo elegida la vivienda",
+      "Estoy buscando opciones",
+      "He firmado las arras"
+    ],
+    "nota": "La pregunta puede venir con el ID 5 o el 210 según la versión."
+  },
+  {
+    "id": [6, 208],
+    "pregunta": "¿Dónde se encuentra la vivienda que quieres comprar?",
+    "opciones": ["Campo desplegable de provincias (o buscador)"]
+  },
+  {
+    "id": [215, 217, 202],
+    "pregunta": "¿Cuánto cuesta la vivienda?",
+    "tipo": "numérico"
+  },
+  {
+    "id": [114, 219, 209],
+    "pregunta": "¿Con cuánto ahorro cuentas?",
+    "tipo": "numérico"
+  },
+  {
+    "id": [15],
+    "pregunta": "¿Cuántas personas solicitarán la hipoteca?",
+    "opciones": [
+      "Solo yo",
+      "Seremos dos personas"
+    ]
+  },
+  {
+    "id": [17],
+    "pregunta": "Edad",
+    "tipo": "numérico"
+  },
+  {
+    "id": [73],
+    "pregunta": "Español/a",
+    "opciones": [
+      "S�",
+      "No"
+    ]
+  },
+  {
+    "id": [71],
+    "pregunta": "Edad 1",
+    "tipo": "numérico"
+  },
+  {
+    "id": [72],
+    "pregunta": "Edad 2",
+    "tipo": "numérico"
+  },
+  {
+    "id": [69],
+    "pregunta": "Español/a 1",
+    "opciones": [
+      "S�",
+      "No"
+    ]
+  },
+  {
+    "id": [74],
+    "pregunta": "Español/a 2",
+    "opciones": [
+      "S�",
+      "No"
+    ]
+  },
+  {
+    "id": [115],
+    "pregunta": "¿Cuáles son vuestros ingresos netos mensuales totales?",
+    "tipo": "numérico"
+  },
+  {
+    "id": [83],
+    "pregunta": "Número de pagas",
+    "opciones": [
+      "12",
+      "14"
+    ]
+  },
+  {
+    "id": [18],
+    "pregunta": "¿Cuál es tu situación laboral?",
+    "opciones": [
+      "Contrato indefinido",
+      "Contrato temporal",
+      "Funcionario",
+      "Interino",
+      "Autónomo"
+    ]
+  },
+  {
+    "id": [19],
+    "pregunta": "¿Has trabajado como autónomo, por cuenta propia, en los últimos 2 años?",
+    "opciones": [
+      "S�",
+      "No"
+    ]
+  },
+  {
+    "id": [21],
+    "pregunta": "¿Cuál es tu antigüedad en el empleo actual?",
+    "opciones": [
+      "Menos de 6 meses",
+      "Entre 6 y 12 meses",
+      "Más de 1 año"
+    ]
+  },
+  {
+    "id": [25],
+    "pregunta": "¿Tienes otras deudas o préstamos activos?",
+    "opciones": [
+      "No tengo ninguna deuda",
+      "S�, préstamos personales",
+      "S�, tarjetas de crédito o l�neas de crédito",
+      "S�, otros (indicar cuáles)"
+    ]
+  },
+  {
+    "id": [27],
+    "pregunta": "¿Tienes alguna propiedad a tu nombre?",
+    "opciones": [
+      "No",
+      "S�, vivienda habitual",
+      "S�, segunda residencia o inmuebles en alquiler"
+    ]
+  },
+  {
+    "id": [28],
+    "pregunta": "¿Cuál es tu situación civil?",
+    "opciones": [
+      "Soltero/a",
+      "Pareja de hecho",
+      "Casado/a en gananciales",
+      "Casado/a en separación de bienes",
+      "Divorciado/a"
+    ]
+  },
+  {
+    "id": [29],
+    "pregunta": "¿Tienes hijo/s?",
+    "opciones": [
+      "S�",
+      "No"
+    ]
+  },
+  {
+    "id": [37],
+    "pregunta": "¿Tienes ya alguna oferta hipotecaria o has hablado con algún banco?",
+    "opciones": [
+      "No, ninguna aún",
+      "S�, tengo una oferta formal",
+      "S�, pero solo informativa"
+    ]
+  },
+  {
+    "id": [30],
+    "pregunta": "¿Cuentas con apoyo familiar o alguna persona que pueda actuar como avalista si lo necesitas?",
+    "opciones": [
+      "S�, podr�an ayudarme económicamente",
+      "S�, tengo a alguien que podr�a avalar la operación",
+      "No, no cuento con ayuda externa",
+      "No lo sé, necesitar�a comentarlo con mi familia"
+    ]
+  },
+  {
+    "id": [40],
+    "pregunta": "Nombre",
+    "tipo": "texto"
+  },
+  {
+    "id": [41],
+    "pregunta": "Teléfono",
+    "tipo": "texto"
+  },
+  {
+    "id": [42],
+    "pregunta": "Correo electrónico",
+    "tipo": "texto"
+  },
+  {
+    "id": [216],
+    "pregunta": "Aceptación de pol�tica de privacidad y RGPD / Acepto recibir llamadas comerciales que puedan ser de mi interés.",
+    "tipo": "checkbox"
+  }
+]
