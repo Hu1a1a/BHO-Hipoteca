@@ -4,14 +4,9 @@ const OAuth = require('oauth-1.0a');
 const crypto = require('crypto');
 const mail = require('./email');
 const OpenAI = require('openai');
-const fs = require('fs').promises;
 const path = require('path');
 const PDFDocument = require('pdfkit');
 const db = require('./db');
-
-const prompt = path.join(__dirname, '../app/prompts/evaluacion_lead.txt');
-const preguntas = path.join(__dirname, '../app/prompts/preguntas.json');
-const banco = path.join(__dirname, '../app/policies/bancos.json');
 
 const url = 'https://buscadordehipotecas.com/wp-json/gf/v2/entries';
 
@@ -75,10 +70,11 @@ async function getResponseAI(form) {
     const response = await openai.responses.create({
         model: 'gpt-4o-mini',
         instructions:
-            await fs.readFile(prompt, 'utf8') +
+            JSON.stringify((await axios.get('https://api.buscadordehipotecas.com/app/policies/bancos.json')).data) +
             "Las preguntas del inputs son los siguientes: " +
-            await fs.readFile(preguntas, 'utf8') + "Los datos de los bancos son los siguientes: " +
-            await fs.readFile(banco, 'utf8')
+            JSON.stringify((await axios.get('https://api.buscadordehipotecas.com/app/prompts/preguntas.json')).data) +
+            "Los datos de los bancos son los siguientes: " +
+            JSON.stringify((await axios.get('https://api.buscadordehipotecas.com/app/policies/bancos.json')).data)
         ,
         input: [
             {
