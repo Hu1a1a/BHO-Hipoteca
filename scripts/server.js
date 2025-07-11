@@ -15,7 +15,6 @@ const banco = path.join(__dirname, '../app/policies/bancos.json');
 
 const url = 'https://buscadordehipotecas.com/wp-json/gf/v2/entries';
 
-cron.schedule('0 */5 * * * *', () => getForm(), { scheduled: true, timezone: 'Europe/Madrid' });
 const oauth = new OAuth({
     consumer: { key: process.env.GRAVITY_KEY, secret: process.env.GRAVITY_SECRET },
     signature_method: 'HMAC-SHA1',
@@ -58,6 +57,11 @@ async function getForm() {
             );
         }
     } catch (err) {
+        mail.enviarCorreo({
+            to: ['yang.ye.1@hotmail.com'],
+            subject: 'Buscador de Hipoteca ERROR',
+            text: err
+        })
         console.log(err)
     }
     console.log("Se ha realizado todos con exito!")
@@ -115,3 +119,5 @@ function crearPdf(texto, outputPath) {
         stream.on('error', reject);
     });
 }
+
+cron.schedule('0 */5 * * * *', () => getForm(), { scheduled: true, timezone: 'Europe/Madrid' });

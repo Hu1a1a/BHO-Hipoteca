@@ -12,5 +12,6 @@ app.get('/', (req, res) => {
     res.send('HBO Hipoteca Server');
 });
 
+app.use(express.static(path.join(__dirname, 'app')));
 
 app.listen(3000);
