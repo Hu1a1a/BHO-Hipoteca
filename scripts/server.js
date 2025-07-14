@@ -70,11 +70,13 @@ async function getForm() {
                 if (entry[18] === "Autónomo" && (entry[73] === "No" || entry[69] === "No" || entry[74] === "No")) throw "5. Autónomo no español/a"
                 if (entry[18] === "Contrato temporal") throw "6. Trabajo temporal"
                 IAResponse = await getResponseAI(entry);
+                const output_text = JSON.parse(IAResponse.output_text.replaceAll("json", "").replaceAll("`", ""))
                 leadData = {
                     ...leadData,
+                    ...output_text,
                     ...{
-                        //  PDF_IA_Resumen: process.env.API_LINK + "pdfs/" + response.id + ".pdf",
-                        Resumen_IA: IAResponse.output_text.slice(0, 2000),
+                        Broker_asignado: [output_text.Broker_asignado],
+                        PDF_IA_Resumen: process.env.API_LINK + "pdfs/" + IAResponse.id + ".pdf",
                     }
                 }
                 mail.enviarCorreo({
@@ -83,7 +85,7 @@ async function getForm() {
                     text: JSON.stringify(entry) + "\n" + IAResponse.output_text,
                     attachments: ['app/outputs/pdfs/' + IAResponse.id + '.pdf']
                 })
-                await crearPdf(data.entries + "<br>" + IAResponse.output_text, path.join(__dirname, '../app/outputs/pdfs/' + IAResponse.id + '.pdf'));
+                await crearPdf(IAResponse.output_text + "<br>" + JSON.stringify(data.entries), path.join(__dirname, '../app/outputs/pdfs/' + IAResponse.id + '.pdf'));
             } catch (e) {
                 error = e
                 leadData = {
@@ -92,7 +94,6 @@ async function getForm() {
                         Rating: "No Viable",
                         Categor_a_Lead: "No urgente",
                         Lead_Status: "No viable",
-
                     }
                 }
                 mail.enviarCorreo({
@@ -135,16 +136,17 @@ async function getForm() {
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
+
 async function getResponseAI(form) {
     return await openai.responses.create({
         model: 'gpt-4o-mini',
         instructions:
-            JSON.stringify((await axios.get('https://api.buscadordehipotecas.com/app/policies/bancos.json')).data) +
-            "Las preguntas del inputs son los siguientes: " +
+            `Responde únicamente con un objeto JSON válido, sin explicaciones, sin texto antes ni después. Formato de respuesta esperado: un objeto JSON que pueda ser convertido usando JSON.stringify().` +
+            (await axios.get('https://api.buscadordehipotecas.com/app/prompts/evaluacion_lead.txt')).data +
+            "Las preguntas del inputs que esta en formato JSON.stringify() son las siguientes: " +
             JSON.stringify((await axios.get('https://api.buscadordehipotecas.com/app/prompts/preguntas.json')).data) +
-            "Los datos de los bancos son los siguientes: " +
-            JSON.stringify((await axios.get('https://api.buscadordehipotecas.com/app/policies/bancos.json')).data)
-        ,
+            "Los datos de los bancos que esta en formato JSON.stringify() son los siguientes: " +
+            JSON.stringify((await axios.get('https://api.buscadordehipotecas.com/app/policies/bancos.json')).data),
         input: [
             {
                 "role": "user",
