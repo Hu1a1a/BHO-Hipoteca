@@ -12,7 +12,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/pdfs', express.static(path.join(__dirname, 'app/outputs/pdfs')));
 
-app.get('/', (req, res) => res.send('HBO Hipoteca Server'));
+app.get('/', (req, res) => res.send('HBO Hipoteca Server v1.0'));
 
 app.use(express.static(path.join(__dirname, 'app')));
 

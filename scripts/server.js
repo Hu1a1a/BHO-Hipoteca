@@ -55,7 +55,6 @@ async function getForm() {
                         Lead_Source: "Web",
                         Country: "España",
                         Street: entry[6],
-                        Description: JSON.stringify(entry),
                         Edad_del_de_los_solicitantes: 0, //Scoring global
                         Edad_titular_2: (LTV * 100).toFixed(0) || 0,
                         Fecha_de_creaci_n: new Date().toISOString().split("T")[0],
