@@ -5,9 +5,9 @@ const crypto = require('crypto');
 const mail = require('./email');
 const OpenAI = require('openai');
 const path = require('path');
-const PDFDocument = require('pdfkit');
 const db = require('./db');
 const { createLead } = require('./zoho');
+const { crearPdf } = require('./pdf');
 
 const url = 'https://buscadordehipotecas.com/wp-json/gf/v2/entries';
 
@@ -37,7 +37,7 @@ async function getForm() {
         );
         const existentes = rows.map(r => r.id);
         for (const entry of data.entries) {
-            if (existentes.some(a => a == entry.id)) continue;
+            //if (existentes.some(a => a == entry.id)) continue;
             let leadData = {}
             let IAResponse = null
             let error = null
@@ -69,23 +69,31 @@ async function getForm() {
                 if (entry[18] === "Autónomo" && (entry[73] === "No" || entry[69] === "No" || entry[74] === "No")) throw "5. Autónomo no español/a"
                 if (entry[18] === "Contrato temporal") throw "6. Trabajo temporal"
                 IAResponse = await getResponseAI(entry);
-                const output_text = JSON.parse(IAResponse.output_text.replaceAll("json", "").replaceAll("`", ""))
+                const output_text = JSON.parse(IAResponse.output_text
+                    .replaceAll("json", "")
+                    .replaceAll("`", "")
+                    .replace(/\\n/g, '\\n')
+                    .replace(/\“|\”/g, '"')
+                    .replace(/\’/g, "'")
+                    .replace(/,\s*}/g, '}')
+                    .replace(/,\s*]/g, ']'))
                 leadData = {
                     ...leadData,
-                    ...output_text,
+                    ...output_text.CRM,
                     ...{
-                        Broker_asignado: [output_text.Broker_asignado],
+                        Broker_asignado: [output_text.CRM.Broker_asignado],
                         PDF_IA_Resumen: process.env.API_LINK + "pdfs/" + IAResponse.id + ".pdf",
                     }
                 }
-                mail.enviarCorreo({
+                await crearPdf(output_text.PDF, path.join(__dirname, '../app/outputs/pdfs/' + IAResponse.id + '.pdf'));
+                await mail.enviarCorreo({
                     to: ['jorgeespallargas@hotmail.com', 'yang.ye.1@hotmail.com'],
                     subject: 'Buscador de Hipoteca ' + IAResponse.id,
-                    text: JSON.stringify(entry) + "\n" + IAResponse.output_text,
+                    text: IAResponse.output_text,
                     attachments: ['app/outputs/pdfs/' + IAResponse.id + '.pdf']
                 })
-                await crearPdf(IAResponse.output_text + "<br>" + JSON.stringify(data.entries), path.join(__dirname, '../app/outputs/pdfs/' + IAResponse.id + '.pdf'));
             } catch (e) {
+                console.log(e)
                 error = e
                 leadData = {
                     ...leadData,
@@ -95,10 +103,10 @@ async function getForm() {
                         Lead_Status: "No viable",
                     }
                 }
-                mail.enviarCorreo({
+                await mail.enviarCorreo({
                     to: ['jorgeespallargas@hotmail.com', 'yang.ye.1@hotmail.com'],
                     subject: 'Buscador de Hipoteca ' + entry.id,
-                    text: "Usuario rechazado, motivo: " + error + "\n" + JSON.stringify(entry),
+                    text: "Usuario rechazado, motivo: " + error,
                 })
             } finally {
                 const ZOHO_id = await createLead(leadData)
@@ -113,7 +121,7 @@ async function getForm() {
                     [
                         entry.id,
                         JSON.stringify(entry),
-                        IAResponse ? JSON.stringify(IAResponse) : null,
+                        IAResponse ? IAResponse.output_text : null,
                         IAResponse ? 'IA' : error,
                         ZOHO_id
                     ]
@@ -138,9 +146,20 @@ const openai = new OpenAI({
 
 async function getResponseAI(form) {
     return await openai.responses.create({
-        model: 'gpt-4o-mini',
+        model: 'gpt-4o',
         instructions:
-            `Responde únicamente con un objeto JSON válido, sin explicaciones, sin texto antes ni después. Formato de respuesta esperado: un objeto JSON que pueda ser convertido usando JSON.stringify().` +
+            `
+            ⚠️ Formato obligatorio: responde únicamente con un objeto JSON válido, directamente serializable usando JSON.stringify(). No incluyas ningún texto, explicación ni notas fuera del objeto.
+
+            🔑 La respuesta debe contener exactamente dos claves principales:
+
+            1. PDF: debe ser un objeto con una propiedad "content" que contenga un array de elementos válidos según el formato de pdfMake (por ejemplo: objetos con text, style, table, etc.). Este contenido se usará directamente para generar un informe en PDF sin necesidad de transformación adicional.
+
+            2. CRM: debe ser un objeto que contenga la información estructurada y resumida del lead, útil para integrarse en el sistema de gestión comercial (CRM). Incluye datos como nombre, email, teléfono, LTV, scoring, clasificación, motivo, banco recomendado, urgencia, etc.
+
+            ✅ La estructura final debe ser 100% válida para JSON.stringify() y apta para su uso directo en procesos de generación de PDF y registro en CRM.
+
+            ` +
             (await axios.get('https://api.buscadordehipotecas.com/app/prompts/evaluacion_lead.txt')).data +
             "Las preguntas del inputs que esta en formato JSON.stringify() son las siguientes: " +
             JSON.stringify((await axios.get('https://api.buscadordehipotecas.com/app/prompts/preguntas.json')).data) +
@@ -166,18 +185,6 @@ async function getResponseAI(form) {
 function checkAge(age) {
     if (!age) return false
     return age < 18 || age > 60
-}
-
-function crearPdf(texto, outputPath) {
-    return new Promise((resolve, reject) => {
-        const doc = new PDFDocument({ margin: 50, size: 'A4' });
-        const stream = require('fs').createWriteStream(outputPath);
-        doc.pipe(stream);
-        doc.fontSize(12).text(texto, { align: 'left' });
-        doc.end();
-        stream.on('finish', () => resolve(outputPath));
-        stream.on('error', reject);
-    });
 }
 
 cron.schedule('0 */5 * * * *', () => getForm(), { scheduled: true, timezone: 'Europe/Madrid' });

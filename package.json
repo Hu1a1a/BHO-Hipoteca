@@ -22,7 +22,8 @@
     "nodemailer": "^7.0.5",
     "oauth-1.0a": "^2.2.6",
     "openai": "^5.8.3",
-    "pdfkit": "^0.17.1"
+    "pdfkit": "^0.17.1",
+    "pdfmake": "^0.2.20"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"

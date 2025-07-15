@@ -9,7 +9,7 @@ const data = {
     refresh_token: process.env.ZOHO_TOKEN,
     grant_type: 'refresh_token'
 };
-let access_token = "1000.df03281cc8ddc477d28c1bff334b634b.969538c0fa7c969365162ee7e19cd177"
+let access_token = "1000.89ea02d6e25c6059a16395adb94a911e.ebc4bf62022d2b09fe332dbe9c600898"
 
 async function refreshToken() {
     try {
@@ -75,11 +75,12 @@ async function createLead(leadData) {
         if (response.data.data[0].code !== "SUCCESS") throw JSON.stringify(response.data.data[0])
         return response.data.data[0].details.id
     } catch (error) {
-        console.log(error)
+        console.log(error.response)
+        if (error.response.status === 401) refreshToken()
         mail.enviarCorreo({
             to: ['yang.ye.1@hotmail.com'],
             subject: 'Buscador de Hipoteca',
-            text: "Error en el ZOHO CRM: " + JSON.stringify(error),
+            text: "Error en el ZOHO CRM: " + error.response.data.message,
         })
     }
 }
