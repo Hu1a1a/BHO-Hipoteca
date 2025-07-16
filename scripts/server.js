@@ -11,7 +11,6 @@ const { crearPdf } = require('./pdf');
 
 const url = 'https://buscadordehipotecas.com/wp-json/gf/v2/entries';
 
-getForm()
 async function getForm() {
     try {
         console.log("Empezando el procedimiento!")
@@ -37,7 +36,7 @@ async function getForm() {
         );
         const existentes = rows.map(r => r.id);
         for (const entry of data.entries) {
-            //if (existentes.some(a => a == entry.id)) continue;
+            if (existentes.some(a => a == entry.id)) continue;
             let leadData = {}
             let IAResponse = null
             let error = null
@@ -48,7 +47,7 @@ async function getForm() {
                     ...leadData,
                     ...{
                         First_Name: entry['40.3'].split(" ")[0],
-                        Last_Name: entry['40.3'].split(" ")[1] || "-",
+                        Last_Name: entry.id,
                         Email: entry[42],
                         Phone: entry[41],
                         Lead_Status: "Nuevo",
@@ -59,7 +58,6 @@ async function getForm() {
                         Edad_titular_2: (LTV * 100).toFixed(0) || 0,
                         Fecha_de_creaci_n: new Date().toISOString().split("T")[0],
                         Categor_a_Lead: entry[5] = "Ya tengo elegida la vivienda" ? "Urgente" : "No urgente",
-
                     }
                 }
                 if (LTV < 0.5) throw "1. LTV menor del 50%"
@@ -98,6 +96,7 @@ async function getForm() {
                 leadData = {
                     ...leadData,
                     ...{
+                        Last_Name: entry.id,
                         Rating: "No Viable",
                         Categor_a_Lead: "No urgente",
                         Lead_Status: "No viable",
@@ -130,7 +129,7 @@ async function getForm() {
         }
     } catch (err) {
         console.log(err)
-        mail.enviarCorreo({
+        await mail.enviarCorreo({
             to: ['yang.ye.1@hotmail.com'],
             subject: 'Buscador de Hipoteca ERROR',
             text: err
@@ -145,10 +144,11 @@ const openai = new OpenAI({
 });
 
 async function getResponseAI(form) {
-    return await openai.responses.create({
-        model: 'gpt-4o',
-        instructions:
-            `
+    try {
+        return await openai.responses.create({
+            model: 'gpt-4o',
+            instructions:
+                `
             ⚠️ Formato obligatorio: responde únicamente con un objeto JSON válido, directamente serializable usando JSON.stringify(). No incluyas ningún texto, explicación ni notas fuera del objeto.
 
             🔑 La respuesta debe contener exactamente dos claves principales:
@@ -160,31 +160,52 @@ async function getResponseAI(form) {
             ✅ La estructura final debe ser 100% válida para JSON.stringify() y apta para su uso directo en procesos de generación de PDF y registro en CRM.
 
             ` +
-            (await axios.get('https://api.buscadordehipotecas.com/app/prompts/evaluacion_lead.txt')).data +
-            "Las preguntas del inputs que esta en formato JSON.stringify() son las siguientes: " +
-            JSON.stringify((await axios.get('https://api.buscadordehipotecas.com/app/prompts/preguntas.json')).data) +
-            "Los datos de los bancos que esta en formato JSON.stringify() son los siguientes: " +
-            JSON.stringify((await axios.get('https://api.buscadordehipotecas.com/app/policies/bancos.json')).data),
-        input: [
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "input_text",
-                        "text": JSON.stringify(form)
-                    }
-                ]
-            }
-        ],
-        reasoning: {},
-        max_output_tokens: 2048,
-        store: true
-    });
+                (await axios.get('https://api.buscadordehipotecas.com/app/prompts/evaluacion_lead.txt')).data +
+                "Las preguntas del inputs que esta en formato JSON.stringify() son las siguientes: " +
+                JSON.stringify((await axios.get('https://api.buscadordehipotecas.com/app/prompts/preguntas.json')).data) +
+                "Los datos de los bancos que esta en formato JSON.stringify() son los siguientes: " +
+                JSON.stringify((await axios.get('https://api.buscadordehipotecas.com/app/policies/bancos.json')).data),
+            input: [
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "input_text",
+                            "text": JSON.stringify(form)
+                        }
+                    ]
+                }
+            ],
+            reasoning: {},
+            max_output_tokens: 2048,
+            store: true
+        });
+    } catch (error) {
+        console.log(error)
+    }
 }
 
 function checkAge(age) {
     if (!age) return false
     return age < 18 || age > 60
 }
+let isRunning = false;
 
-cron.schedule('0 */5 * * * *', () => getForm(), { scheduled: true, timezone: 'Europe/Madrid' });
+cron.schedule('0 */1 * * * *', async () => {
+    console.log("dfdsfsa", isRunning)
+    if (isRunning) {
+        console.log('La tarea anterior sigue en ejecución. Se omite esta iteración.');
+        return;
+    }
+    try {
+        isRunning = true;
+        await getForm();
+    } catch (error) {
+        console.error('Error ejecutando getForm:', error);
+    } finally {
+        isRunning = false;
+    }
+}, {
+    scheduled: true,
+    timezone: 'Europe/Madrid'
+});

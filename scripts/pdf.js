@@ -17,37 +17,42 @@ const printer = new PdfPrinter(fonts);
  * @param {string} rutaSalida - Ruta del archivo PDF de salida
  */
 async function crearPdf(json, rutaSalida) {
-    const dir = path.dirname(rutaSalida);
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
-    }
+    try {
 
-    const docDefinition = {
-        content: json.content,
-        styles: {
-            header: { fontSize: 20, bold: true, margin: [0, 0, 0, 15] },
-            subheader: { fontSize: 14, bold: true, margin: [0, 10, 0, 5] },
-            bold: { bold: true }
-        },
-        defaultStyle: {
-            font: 'Roboto',
-            fontSize: 11
-        },
-        pageMargins: [40, 60, 40, 60]
-    };
+        const dir = path.dirname(rutaSalida);
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+        }
 
-    const pdfDoc = printer.createPdfKitDocument(docDefinition);
-    const stream = fs.createWriteStream(rutaSalida);
-    pdfDoc.pipe(stream);
-    pdfDoc.end();
+        const docDefinition = {
+            content: json.content,
+            styles: {
+                header: { fontSize: 20, bold: true, margin: [0, 0, 0, 15] },
+                subheader: { fontSize: 14, bold: true, margin: [0, 10, 0, 5] },
+                bold: { bold: true }
+            },
+            defaultStyle: {
+                font: 'Roboto',
+                fontSize: 11
+            },
+            pageMargins: [40, 60, 40, 60]
+        };
 
-    return new Promise((resolve, reject) => {
-        stream.on('finish', () => {
-            console.log(`✅ PDF generado en: ${rutaSalida}`);
-            resolve();
+        const pdfDoc = printer.createPdfKitDocument(docDefinition);
+        const stream = fs.createWriteStream(rutaSalida);
+        pdfDoc.pipe(stream);
+        pdfDoc.end();
+
+        return new Promise((resolve, reject) => {
+            stream.on('finish', () => {
+                console.log(`✅ PDF generado en: ${rutaSalida}`);
+                resolve();
+            });
+            stream.on('error', reject);
         });
-        stream.on('error', reject);
-    });
+    } catch (error) {
+        console.log(error)
+    }
 }
 
 module.exports = { crearPdf };
