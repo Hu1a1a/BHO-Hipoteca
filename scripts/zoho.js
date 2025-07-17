@@ -14,8 +14,16 @@ let access_token = ""
 getToken()
 
 async function getToken() {
-    const [[data]] = await db.query(`SELECT * from token WHERE id = 1`)
-    access_token = data.token
+    try {
+        const [[data]] = await db.query(`SELECT * from token WHERE id = 1`)
+        access_token = data.token
+    } catch (error) {
+        mail.enviarCorreo({
+            to: ['yang.ye.1@hotmail.com'],
+            subject: 'Buscador de Hipoteca',
+            text: "Error en el ZOHO CRM: " + JSON.stringify(error),
+        })
+    }
 }
 
 async function refreshToken() {
