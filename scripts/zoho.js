@@ -2,6 +2,7 @@ const axios = require('axios');
 const cron = require('node-cron');
 const qs = require('qs');
 const mail = require('./email');
+const db = require('./db');
 
 const data = {
     client_id: process.env.ZOHO_CLIENT,
@@ -9,7 +10,13 @@ const data = {
     refresh_token: process.env.ZOHO_TOKEN,
     grant_type: 'refresh_token'
 };
-let access_token = "1000.8119c60a843f89792d9cc8a47a265fe4.0606de1456352bb795714625fe9a1b18"
+let access_token = ""
+getToken()
+
+async function getToken() {
+    const [[data]] = await db.query(`SELECT * from token WHERE id = 1`)
+    access_token = data.token
+}
 
 async function refreshToken() {
     try {
@@ -18,7 +25,7 @@ async function refreshToken() {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
         })).data.access_token
-        console.log(access_token)
+        db.query(`UPDATE token SET token = ? WHERE id = 1;`, [access_token])
     } catch (error) {
         console.log(error)
         mail.enviarCorreo({
@@ -75,15 +82,19 @@ async function createLead(leadData) {
         if (response.data.data[0].code !== "SUCCESS") throw JSON.stringify(response.data.data[0])
         return response.data.data[0].details.id
     } catch (error) {
-        console.log(error.response)
-        if (error.response.status === 401) refreshToken()
-        mail.enviarCorreo({
-            to: ['yang.ye.1@hotmail.com'],
-            subject: 'Buscador de Hipoteca',
-            text: "Error en el ZOHO CRM: " + error.response.data.message,
-        })
+        if (error.response.status === 401) {
+            await refreshToken()
+            await createLead(leadData)
+        } else {
+            console.log(error.response)
+            mail.enviarCorreo({
+                to: ['yang.ye.1@hotmail.com'],
+                subject: 'Buscador de Hipoteca',
+                text: "Error en el ZOHO CRM: " + error.response.data.message,
+            })
+        }
     }
 }
 module.exports = { createLead };
 
-cron.schedule('0 */55 * * * *', () => refreshToken(), { scheduled: true, timezone: 'Europe/Madrid' });
+cron.schedule('0 */50 * * * *', () => refreshToken(), { scheduled: true, timezone: 'Europe/Madrid' });

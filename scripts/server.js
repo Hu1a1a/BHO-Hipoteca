@@ -192,11 +192,7 @@ function checkAge(age) {
 let isRunning = false;
 
 cron.schedule('0 */1 * * * *', async () => {
-    console.log("dfdsfsa", isRunning)
-    if (isRunning) {
-        console.log('La tarea anterior sigue en ejecución. Se omite esta iteración.');
-        return;
-    }
+    if (isRunning) return console.log('La tarea anterior sigue en ejecución. Se omite esta iteración.');
     try {
         isRunning = true;
         await getForm();
