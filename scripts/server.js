@@ -197,8 +197,7 @@ function checkAge(age) {
     if (!age) return false
     return age < 18 || age > 60
 }
-let isRunning = true;
-getForm()
+let isRunning = false;
 
 cron.schedule('0 */1 * * * *', async () => {
     if (isRunning) return console.log('La tarea anterior sigue en ejecución. Se omite esta iteración.');
