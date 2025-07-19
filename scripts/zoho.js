@@ -90,15 +90,15 @@ async function createLead(leadData) {
         if (response.data.data[0].code !== "SUCCESS") throw JSON.stringify(response.data.data[0])
         return response.data.data[0].details.id
     } catch (error) {
-        if (error.response.status === 401) {
+        console.log(error)
+        if (error.response?.status === 401) {
             await refreshToken()
             await createLead(leadData)
         } else {
-            console.log(error.response)
             mail.enviarCorreo({
                 to: ['yang.ye.1@hotmail.com'],
                 subject: 'Buscador de Hipoteca',
-                text: "Error en el ZOHO CRM: " + error.response.data.message,
+                text: "Error en el ZOHO CRM: " + error,
             })
         }
     }

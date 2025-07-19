@@ -54,62 +54,63 @@ async function getForm() {
                         Lead_Source: "Web",
                         Country: "España",
                         Street: entry[6],
-                        Edad_del_de_los_solicitantes: 0, //Scoring global
-                        Edad_titular_2: (LTV * 100).toFixed(0) || 0,
+                        Scoring_Global: 0, //Scoring global
+                        LTV: parseInt(LTV * 100) || 0,
                         Fecha_de_creaci_n: new Date().toISOString().split("T")[0],
-                        Categor_a_Lead: entry[5] = "Ya tengo elegida la vivienda" ? "Urgente" : "No urgente",
+                        Urgencia_Lead: (entry[5] === "Ya tengo elegida la vivienda" || entry[5] === "He firmado las arras" || entry[210]) ? "Urgente" : "No urgente",
                     }
                 }
-                if (LTV < 0.5) throw "1. LTV menor del 50%"
-                if (entry[5] === "Estoy buscando opciones") throw "2. Están buscando opciones"
-                if (checkAge(entry[17]) || checkAge(entry[71]) || checkAge(entry[72])) throw "3. Menores de 18 o mayores de 60 años"
-                if (entry[115] < 1200) throw "4. Nómina inferior a 1200€"
-                if (entry[18] === "Autónomo" && (entry[73] === "No" || entry[69] === "No" || entry[74] === "No")) throw "5. Autónomo no español/a"
-                if (entry[18] === "Contrato temporal") throw "6. Trabajo temporal"
-                IAResponse = await getResponseAI(entry);
-                const output_text = JSON.parse(IAResponse.output_text
-                    .replaceAll("json", "")
-                    .replaceAll("`", "")
-                    .replace(/\\n/g, '\\n')
-                    .replace(/\“|\”/g, '"')
-                    .replace(/\’/g, "'")
-                    .replace(/,\s*}/g, '}')
-                    .replace(/,\s*]/g, ']'))
-                leadData = {
-                    ...leadData,
-                    ...output_text.CRM,
-                    ...{
-                        Broker_asignado: [output_text.CRM.Broker_asignado],
-                        PDF_IA_Resumen: process.env.API_LINK + "pdfs/" + IAResponse.id + ".pdf",
+                // if (LTV < 0.5) error = "1. LTV menor del 50%"
+                // else if (entry[5] === "Estoy buscando opciones") error = "2. Están buscando opciones"
+                if (checkAge(entry[17]) || checkAge(entry[71]) || checkAge(entry[72])) error = "3. Menores de 18 o mayores de 60 años"
+                else if (entry[115] < 1200) error = "4. Nómina inferior a 1200€"
+                // else if (entry[18] === "Autónomo" && (entry[73] === "No" || entry[69] === "No" || entry[74] === "No")) error = "5. Autónomo no español/a"
+                // else if (entry[18] === "Contrato temporal") error = "6. Trabajo temporal"
+                if (error) {
+                    leadData = {
+                        ...leadData,
+                        ...{
+                            Last_Name: entry.id,
+                            Rating: "No Viable",
+                            Urgencia_Lead: "No urgente",
+                            Lead_Status: "No viable",
+                        }
                     }
-                }
-                await crearPdf(output_text.PDF, path.join(__dirname, '../app/outputs/pdfs/' + IAResponse.id + '.pdf'));
-                await mail.enviarCorreo({
-                    to: ['jorgeespallargas@hotmail.com', 'yang.ye.1@hotmail.com'],
-                    subject: 'Buscador de Hipoteca ' + IAResponse.id,
-                    text: IAResponse.output_text,
-                    attachments: ['app/outputs/pdfs/' + IAResponse.id + '.pdf']
-                })
-            } catch (e) {
-                console.log(e)
-                error = e
-                leadData = {
-                    ...leadData,
-                    ...{
-                        Last_Name: entry.id,
-                        Rating: "No Viable",
-                        Categor_a_Lead: "No urgente",
-                        Lead_Status: "No viable",
+                    mail.enviarCorreo({
+                        to: ['jorgeespallargas@hotmail.com', 'yang.ye.1@hotmail.com'],
+                        subject: 'Buscador de Hipoteca ' + entry.id,
+                        text: "Usuario rechazado, motivo: " + error,
+                    })
+                } else {
+                    IAResponse = await getResponseAI(entry);
+                    const output_text = JSON.parse(IAResponse.output_text
+                        .replaceAll("json", "")
+                        .replaceAll("`", "")
+                        .replace(/\\n/g, '\\n')
+                        .replace(/\“|\”/g, '"')
+                        .replace(/\’/g, "'")
+                        .replace(/,\s*}/g, '}')
+                        .replace(/,\s*]/g, ']'))
+                    leadData = {
+                        ...leadData,
+                        ...output_text.CRM,
+                        ...{
+                            Broker_asignado: [output_text.CRM.Broker_asignado],
+                            PDF_IA_Resumen: process.env.API_LINK + "pdfs/" + IAResponse.id + ".pdf",
+                            LTV: parseInt(LTV * 100) || 0,
+                            Urgencia_Lead: (entry[5] === "Ya tengo elegida la vivienda" || entry[210]) ? "Urgente" : "No urgente",
+                        }
                     }
+                    await crearPdf(output_text.PDF, path.join(__dirname, '../app/outputs/pdfs/' + IAResponse.id + '.pdf'));
+                    mail.enviarCorreo({
+                        to: ['jorgeespallargas@hotmail.com', 'yang.ye.1@hotmail.com'],
+                        subject: 'Buscador de Hipoteca ' + IAResponse.id,
+                        text: IAResponse.output_text,
+                        attachments: ['app/outputs/pdfs/' + IAResponse.id + '.pdf']
+                    })
                 }
-                await mail.enviarCorreo({
-                    to: ['jorgeespallargas@hotmail.com', 'yang.ye.1@hotmail.com'],
-                    subject: 'Buscador de Hipoteca ' + entry.id,
-                    text: "Usuario rechazado, motivo: " + error,
-                })
-            } finally {
                 const ZOHO_id = await createLead(leadData)
-                await db.query(
+                db.query(
                     `INSERT INTO form (id, form, output, estado, zoho_id) 
                     VALUES (?, ?, ?, ?, ?)
                     ON DUPLICATE KEY UPDATE 
@@ -125,11 +126,18 @@ async function getForm() {
                         ZOHO_id
                     ]
                 )
+            } catch (e) {
+                console.log(e)
+                mail.enviarCorreo({
+                    to: ['yang.ye.1@hotmail.com'],
+                    subject: 'Buscador de Hipoteca ERROR',
+                    text: err
+                })
             }
         }
     } catch (err) {
         console.log(err)
-        await mail.enviarCorreo({
+        mail.enviarCorreo({
             to: ['yang.ye.1@hotmail.com'],
             subject: 'Buscador de Hipoteca ERROR',
             text: err
@@ -189,7 +197,8 @@ function checkAge(age) {
     if (!age) return false
     return age < 18 || age > 60
 }
-let isRunning = false;
+let isRunning = true;
+getForm()
 
 cron.schedule('0 */1 * * * *', async () => {
     if (isRunning) return console.log('La tarea anterior sigue en ejecución. Se omite esta iteración.');
