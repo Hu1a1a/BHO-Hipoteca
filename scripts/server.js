@@ -57,7 +57,7 @@ async function getForm() {
                         Scoring_Global: 0, //Scoring global
                         LTV: parseInt(LTV * 100) || 0,
                         Fecha_de_creaci_n: new Date().toISOString().split("T")[0],
-                        Urgencia_Lead: (entry[5] === "Ya tengo elegida la vivienda" || entry[5] === "He firmado las arras" || entry[210]) ? "Urgente" : "No urgente",
+                        Urgencia_Lead: (entry[5] === "He firmado las arras" || entry[210]) ? "Urgente" : "No urgente",
                     }
                 }
                 // if (LTV < 0.5) error = "1. LTV menor del 50%"
@@ -98,7 +98,7 @@ async function getForm() {
                             Broker_asignado: [output_text.CRM.Broker_asignado],
                             PDF_IA_Resumen: process.env.API_LINK + "pdfs/" + IAResponse.id + ".pdf",
                             LTV: parseInt(LTV * 100) || 0,
-                            Urgencia_Lead: (entry[5] === "Ya tengo elegida la vivienda" || entry[210]) ? "Urgente" : "No urgente",
+                            Urgencia_Lead: (entry[5] === "He firmado las arras" || entry[210]) ? "Urgente" : "No urgente",
                         }
                     }
                     await crearPdf(output_text.PDF, path.join(__dirname, '../app/outputs/pdfs/' + IAResponse.id + '.pdf'));
