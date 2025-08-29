@@ -24,9 +24,10 @@ async function getForm() {
                     .digest('base64');
             }
         });
-        const request_data = { url: url + '?form_ids=4,10&sorting[direction]=DESC', method: 'GET', };
+        const request_data = { url: url + '?form_ids=[4,10]&sorting[direction]=DESC', method: 'GET', };
         const authHeader = oauth.toHeader(oauth.authorize(request_data));
         const { data } = await axios.get(request_data.url, { headers: { ...authHeader, Accept: 'application/json' } });
+
         const entryIds = (data?.entries || []).map(e => e.id);
         if (entryIds.length === 0) return;
         const placeholders = entryIds.map(() => '?').join(',');
