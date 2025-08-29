@@ -10,8 +10,8 @@ const { createLead } = require('./zoho');
 const { crearPdf } = require('./pdf');
 
 const url = 'https://buscadordehipotecas.com/wp-json/gf/v2/entries';
-
 async function getForm() {
+    isRunning = true;
     try {
         console.log("Empezando el procedimiento!")
         const oauth = new OAuth({
@@ -76,11 +76,6 @@ async function getForm() {
                             Lead_Status: "No viable",
                         }
                     }
-                    mail.enviarCorreo({
-                        to: ['jorgeespallargas@hotmail.com', 'yang.ye.1@hotmail.com'],
-                        subject: 'Buscador de Hipoteca ' + entry.id,
-                        text: "Usuario rechazado, motivo: " + error,
-                    })
                 } else {
                     IAResponse = await getResponseAI(entry);
                     const output_text = JSON.parse(IAResponse.output_text
@@ -102,15 +97,10 @@ async function getForm() {
                         }
                     }
                     await crearPdf(output_text.PDF, path.join(__dirname, '../app/outputs/pdfs/' + IAResponse.id + '.pdf'));
-                    mail.enviarCorreo({
-                        to: ['jorgeespallargas@hotmail.com', 'yang.ye.1@hotmail.com'],
-                        subject: 'Buscador de Hipoteca ' + IAResponse.id,
-                        text: IAResponse.output_text,
-                        attachments: ['app/outputs/pdfs/' + IAResponse.id + '.pdf']
-                    })
+
                 }
                 const ZOHO_id = await createLead(leadData)
-                db.query(
+                await db.query(
                     `INSERT INTO form (id, form, output, estado, zoho_id) 
                     VALUES (?, ?, ?, ?, ?)
                     ON DUPLICATE KEY UPDATE 
@@ -126,18 +116,32 @@ async function getForm() {
                         ZOHO_id
                     ]
                 )
+                if (error) {
+                    await mail.enviarCorreo({
+                        to: ['jorgeespallargas@hotmail.com', 'yang.ye.1@hotmail.com'],
+                        subject: 'Buscador de Hipoteca ' + entry.id,
+                        text: "Usuario rechazado, motivo: " + error,
+                    })
+                } else {
+                    await mail.enviarCorreo({
+                        to: ['jorgeespallargas@hotmail.com', 'yang.ye.1@hotmail.com'],
+                        subject: 'Buscador de Hipoteca ' + IAResponse.id,
+                        text: IAResponse.output_text,
+                        attachments: ['app/outputs/pdfs/' + IAResponse.id + '.pdf']
+                    })
+                }
             } catch (e) {
                 console.log(e)
-                mail.enviarCorreo({
+                await mail.enviarCorreo({
                     to: ['yang.ye.1@hotmail.com'],
                     subject: 'Buscador de Hipoteca ERROR',
-                    text: err
+                    text: e
                 })
             }
         }
     } catch (err) {
         console.log(err)
-        mail.enviarCorreo({
+        await mail.enviarCorreo({
             to: ['yang.ye.1@hotmail.com'],
             subject: 'Buscador de Hipoteca ERROR',
             text: err
@@ -202,7 +206,6 @@ let isRunning = false;
 cron.schedule('0 */1 * * * *', async () => {
     if (isRunning) return console.log('La tarea anterior sigue en ejecución. Se omite esta iteración.');
     try {
-        isRunning = true;
         await getForm();
     } catch (error) {
         console.error('Error ejecutando getForm:', error);

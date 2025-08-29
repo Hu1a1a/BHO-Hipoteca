@@ -2,9 +2,9 @@ const nodemailer = require('nodemailer');
 const path = require('path');
 
 const transporter = nodemailer.createTransport({
-    host: "mail.buscadordehipotecas.com",
-    port: 465,
-    secure: true,
+    host: "smtp.ionos.es",
+    port: 587,
+    secure: false,
     auth: {
         user: process.env.EMAIL,
         pass: process.env.EMAIL_PASS
