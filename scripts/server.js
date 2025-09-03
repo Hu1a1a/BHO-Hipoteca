@@ -10,6 +10,11 @@ const { createLead } = require('./zoho');
 const { crearPdf } = require('./pdf');
 
 const url = 'https://buscadordehipotecas.com/wp-json/gf/v2/entries';
+
+function getUrgencia(entry) {
+    return (["He firmado las arras", "Ya he firmado las arras", 'I’ve signed the deposit agreement'].includes(entry[5]) || entry[210]) ? "Urgente" : "No urgente"
+}
+
 async function getForm() {
     isRunning = true;
     try {
@@ -58,7 +63,7 @@ async function getForm() {
                         Scoring_Global: 0, //Scoring global
                         LTV: parseInt(LTV * 100) || 0,
                         Fecha_de_creaci_n: new Date().toISOString().split("T")[0],
-                        Urgencia_Lead: (entry[5] === "He firmado las arras" || entry[210]) ? "Urgente" : "No urgente",
+                        Urgencia_Lead: getUrgencia(entry),
                     }
                 }
                 // if (LTV < 0.5) error = "1. LTV menor del 50%"
@@ -94,12 +99,13 @@ async function getForm() {
                             Broker_asignado: [output_text.CRM.Broker_asignado],
                             PDF_IA_Resumen: process.env.API_LINK + "pdfs/" + IAResponse.id + ".pdf",
                             LTV: parseInt(LTV * 100) || 0,
-                            Urgencia_Lead: (entry[5] === "He firmado las arras" || entry[210]) ? "Urgente" : "No urgente",
+                            Urgencia_Lead: getUrgencia(entry),
                         }
                     }
                     await crearPdf(output_text.PDF, path.join(__dirname, '../app/outputs/pdfs/' + IAResponse.id + '.pdf'));
 
                 }
+
                 const ZOHO_id = await createLead(leadData)
                 await db.query(
                     `INSERT INTO form (id, form, output, estado, zoho_id) 
