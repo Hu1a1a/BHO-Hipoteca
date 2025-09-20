@@ -42,6 +42,7 @@ async function getForm() {
         );
         const existentes = rows.map(r => r.id);
         for (const entry of data.entries) {
+            if (entry.form_id !== "4" && entry.form_id !== "10") continue;
             if (existentes.some(a => a == entry.id)) continue;
             let leadData = {}
             let IAResponse = null
@@ -50,21 +51,19 @@ async function getForm() {
                 console.log("Realizando analisis sobre el formulario: " + entry.id)
                 const LTV = (entry[215] + entry[202] - entry[114] - entry[209]) / (entry[215] + entry[202]) || 0
                 leadData = {
-                    ...leadData,
-                    ...{
-                        First_Name: entry['40.3'].split(" ")[0],
-                        Last_Name: entry.id,
-                        Email: entry[42],
-                        Phone: entry[41],
-                        Lead_Status: "Nuevo",
-                        Lead_Source: "Web",
-                        Country: "España",
-                        Street: entry[6],
-                        Scoring_Global: 0, //Scoring global
-                        LTV: parseInt(LTV * 100) || 0,
-                        Fecha_de_creaci_n: new Date().toISOString().split("T")[0],
-                        Urgencia_Lead: getUrgencia(entry),
-                    }
+                    First_Name: entry['40.3']?.split(" ")[0],
+                    Last_Name: entry.id,
+                    Email: entry[42],
+                    Phone: entry[41],
+                    Provincia: entry[6],
+                    Lead_Status: "Nuevo",
+                    Lead_Source: "Web",
+                    Country: "España",
+                    Street: entry[6],
+                    Scoring_Global: 0, //Scoring global
+                    LTV: parseInt(LTV * 100) || 0,
+                    Fecha_de_creaci_n: new Date().toISOString().split("T")[0],
+                    Urgencia_Lead: getUrgencia(entry),
                 }
                 // if (LTV < 0.5) error = "1. LTV menor del 50%"
                 // else if (entry[5] === "Estoy buscando opciones") error = "2. Están buscando opciones"
@@ -223,3 +222,5 @@ cron.schedule('0 */1 * * * *', async () => {
     scheduled: true,
     timezone: 'Europe/Madrid'
 });
+
+getForm()
