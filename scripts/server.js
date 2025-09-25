@@ -226,5 +226,3 @@ cron.schedule('0 */1 * * * *', async () => {
     scheduled: true,
     timezone: 'Europe/Madrid'
 });
-
-getForm()
