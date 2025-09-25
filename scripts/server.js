@@ -12,7 +12,11 @@ const { crearPdf } = require('./pdf');
 const url = 'https://buscadordehipotecas.com/wp-json/gf/v2/entries';
 
 function getUrgencia(entry) {
-    return (["He firmado las arras", "Ya he firmado las arras", 'I’ve signed the deposit agreement'].includes(entry[5]) || entry[210]) ? "Urgente" : "No urgente"
+    if (["He firmado las arras", "Ya he firmado las arras", "I’ve signed the deposit agreement"].includes(entry[5]) || entry[210]) {
+        return "Urgente"
+    } else if (["Ya tengo elegida la vivienda", "I’ve already chosen the home"].includes(entry[5]) || entry[210]) {
+        return "Activo "
+    } return "No urgente"
 }
 
 async function getForm() {
