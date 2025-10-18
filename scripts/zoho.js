@@ -19,7 +19,7 @@ async function getToken() {
         access_token = data.token
     } catch (error) {
         mail.enviarCorreo({
-            to: ['yang.ye.1@hotmail.com'],
+            to: ['jorgeespallargas@hotmail.com'],
             subject: 'Buscador de Hipoteca',
             text: "Error en el ZOHO CRM: " + JSON.stringify(error),
         })
@@ -37,7 +37,7 @@ async function refreshToken() {
     } catch (error) {
         console.log(error)
         mail.enviarCorreo({
-            to: ['yang.ye.1@hotmail.com'],
+            to: ['jorgeespallargas@hotmail.com'],
             subject: 'Buscador de Hipoteca',
             text: "Error en el ZOHO CRM: " + JSON.stringify(error),
         })
@@ -96,7 +96,7 @@ async function createLead(leadData) {
             await createLead(leadData)
         } else {
             mail.enviarCorreo({
-                to: ['yang.ye.1@hotmail.com'],
+                to: ['jorgeespallargas@hotmail.com'],
                 subject: 'Buscador de Hipoteca',
                 text: "Error en el ZOHO CRM: " + error,
             })

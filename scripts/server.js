@@ -128,13 +128,13 @@ async function getForm() {
                 )
                 if (error) {
                     await mail.enviarCorreo({
-                        to: ['jorgeespallargas@hotmail.com', 'yang.ye.1@hotmail.com'],
+                        to: ['jorgeespallargas@hotmail.com'],
                         subject: 'Buscador de Hipoteca ' + entry.id,
                         text: "Usuario rechazado, motivo: " + error,
                     })
                 } else {
                     await mail.enviarCorreo({
-                        to: ['jorgeespallargas@hotmail.com', 'yang.ye.1@hotmail.com'],
+                        to: ['jorgeespallargas@hotmail.com'],
                         subject: 'Buscador de Hipoteca ' + IAResponse.id,
                         text: IAResponse.output_text,
                         attachments: ['app/outputs/pdfs/' + IAResponse.id + '.pdf']
@@ -143,7 +143,7 @@ async function getForm() {
             } catch (e) {
                 console.log(e)
                 await mail.enviarCorreo({
-                    to: ['yang.ye.1@hotmail.com'],
+                    to: ['jorgeespallargas@hotmail.com'],
                     subject: 'Buscador de Hipoteca ERROR',
                     text: e
                 })
@@ -152,7 +152,7 @@ async function getForm() {
     } catch (err) {
         console.log(err)
         await mail.enviarCorreo({
-            to: ['yang.ye.1@hotmail.com'],
+            to: ['jorgeespallargas@hotmail.com'],
             subject: 'Buscador de Hipoteca ERROR',
             text: err
         })
