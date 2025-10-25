@@ -45,9 +45,10 @@ async function getForm() {
             entryIds
         );
         const existentes = rows.map(r => r.id);
+
         for (const entry of data.entries) {
-            if (entry.form_id !== "4" && entry.form_id !== "10") continue;
-            if (existentes.some(a => a == entry.id)) continue;
+            if (+entry.form_id !== 4 && +entry.form_id !== 10) continue;
+            if (existentes.some(a => a == +entry.id)) continue;
             let leadData = {}
             let IAResponse = null
             let error = null
